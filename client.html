@@ -98,6 +98,7 @@ function send() {
     //var str = "{name:'" + myname + "',peername:'" + peername + "',msg:'" + msg2snd + "'}";
      var str = "{name:'" + myname + "',peername:'" + peername + "',msg:'" + msg2snd + "'}";
     ws.send(str); 
+    $("#message").val("");
 };
 function exit() {
     var r = ws.close();
