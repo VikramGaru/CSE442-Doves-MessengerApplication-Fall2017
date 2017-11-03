@@ -1,4 +1,4 @@
-// @Author  Vikram Garu and Veronica Ng. 
+// @Author  Vikram Garu and Veronica Ng.
 
 var express = require('express');
 var app = express();
@@ -10,7 +10,7 @@ const port1 = '443';
 var https = require('https');
 
 var fs = require("fs");
-//Var options code from Godaddy with the corresponding File Path On my server. 
+//Var options code from Godaddy with the corresponding File Path On my server.
 var options = {
 
  ca: fs.readFileSync('/var/SSL/dovesmessenger_com.ca-bundle'),
@@ -24,8 +24,8 @@ var bodyParser = require("body-parser");
 
 var MongoClient = require('mongodb').MongoClient;
 var url = "mongodb://104.131.3.139:27017";
- //code from Godaddy for testing purposes only. 
- 
+ //code from Godaddy for testing purposes only.
+
 
 
 
@@ -45,7 +45,7 @@ res.write('0');
 }
 else{
 secret = Math.random();
-var retObj = 
+var retObj =
 {
 email: req.body.email,
 secret: secret
@@ -118,17 +118,17 @@ var secret = null;
 const webSckSrv = require('ws');
 var wssServer = https.createServer(options);
 const wss= new webSckSrv.Server({ server: wssServer });
-wssServer.listen(12345,function() { 
+wssServer.listen(12345,function() {
    console.log("wss listening on 12345");
 });
 function sckheartbeat() {
   this.isAlive = true;
-   
+
 
 }
 
 wss.broadcast = function broadcast(s,ws) {
- 
+
   wss.clients.forEach(function each(client) {
          if (typeof client.user != "undefined") {
         if(s == 1){
@@ -148,12 +148,12 @@ console.log("sending " + ws.msg + " to " + client.user);
 
 
 wss.on('connection', function(ws, req) {
-    console.log("connection");    
+    console.log("connection");
     var firstMessage = true;
     const ip = req.connection.remoteAddress;
     console.log(ip);
     const ip2 = req.headers['x-forwarded-for'];
-    
+
 ws.isAlive = true;
     ws.on('message', function(jsonStr,flags) {
 console.log(jsonStr);
@@ -175,7 +175,7 @@ secret = null;
         this.user = obj;
         if (typeof this.user.msg != "undefined") {
             wss.broadcast(1,obj);
-              
+
         }
     });
 
@@ -194,7 +194,7 @@ const interval = setInterval(function ping() {
     if (ws.isAlive === false) return ws.terminate();
 
     //ws.isAlive = false;
-      
+
     ws.ping('', false, true);
   });
 }, 30000);
@@ -267,7 +267,7 @@ MongoClient.connect(url, function(err, db) {
     console.log(result);
     db.close();
   });
-}); 
+});
 }
 
 /*
@@ -290,7 +290,7 @@ MongoClient.connect(url, function(err, db) {
 
 /*
 Login a user
-*/    
+*/
 function login(ulog,pass){
 return new Promise(function(resolve,reject){
 var promise=findUser(ulog);
@@ -324,6 +324,40 @@ MongoClient.connect(url, function(err, db) {
   });
 });
 }
-//I added the very last line here. 
+//I added the very last line here.
 
 //}).listen(port1);
+
+/*
+add message to database
+*/
+function saveMessage(message){
+  MongoClient.connect(url, function(err, db) {
+    var collection = db.collection("chat_messages");
+    var message_obj = {content: message};
+    collection.insetOne(message_obj, function(err, res) {
+      if (err) reject(err) ;
+      console.log("Message saved");
+      db.close();
+    });
+  });
+}; //end saveMessage
+
+/*
+get messages from database
+*/
+function getMessages(){
+  return new Promise(function(resolve, reject){
+    MongoClient.connect(url, function(err, db) {
+      if (err) {reject(err);}
+      db.collection("chat_messages").find().sort({ _id : -1 }).limit(10).toArray( function(err, result) {
+        if (err) {
+          reject(err);
+        }
+        db.close();
+        resolve(result);
+      });
+    });
+  });
+} // end getMessages
+
