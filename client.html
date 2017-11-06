@@ -1,4 +1,4 @@
- <!-- @Author  Tian Qinxin and Jiewei Shen and Tushar 
+ <!--
 
 <!DOCTYPE html>
 <html>
@@ -110,7 +110,7 @@ ws.onopen = function() {
     //$("#show").html("conn state: " + ws.readyState + "</br>");
       $("#show").html("<i>Start Group Chatting With Your Friends</i>" + "</br>");
 //    ws.open("start");
-	ws.send(getQueryVariable("secret"));
+    ws.send(getQueryVariable("secret"));
 };
 
 ws.onmessage = function(info) {
@@ -121,7 +121,7 @@ ws.onmessage = function(info) {
 ws.onclose = function(info) {
     console.log("ws.onclose!");
     console.log(info);
-	window.location.replace('login.html');
+    window.location.replace('login.html');
 };
 ws.onerror = function(info) {
     console.log("ws.onerror!");
