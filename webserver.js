@@ -1,3 +1,22 @@
+//https://github.com/websockets/ws
+//https://github.com/websockets/ws/blob/master/doc/ws.md#new-wsserveroptions-callback
+//http://django-websocket-redis.readthedocs.io/en/latest/heartbeats.html
+
+//http://nodejs.cn/api/http.html
+//https://www.youtube.com/watch?v=uaizKlOXyfY
+//https://www.youtube.com/watch?v=OjJ7XgWd9mQ
+//https://www.youtube.com/watch?v=pNKNYLv2BpQ
+//https://www.youtube.com/watch?v=HyGtI17qAjM
+//https://www.youtube.com/watch?v=tHbCkikFfDE
+
+
+//The Websocket protocol implements so called PING/PONG messages to keep Websockets alive,
+//even behind proxies, firewalls and load-balancers. The server sends a 
+//PING message to the client through the Websocket, which then replies 
+//with PONG. If the client does not reply, the server closes the 
+//connection.
+
+
 //@Author  Tushar Seth, Jeiwei Shen, Qinxin Tian, Veronica Ng and Vikram Garu
 var express = require('express');
 var app = express();
