@@ -142,7 +142,10 @@ console.log("sending " + ws.msg + " to " + fromEmail);
                           client.send("[" + Date() + "]: "+ fromEmail + ": " + "'"+ ws.msg + "'");
         }
         if(s == 0){
-        client.send(fromEmail + " exit chatroom");
+        //client.send(fromEmail + " exit chatroom");
+                         client.send("One User Exited Chatroom");
+
+                        
         }
          }
     });
