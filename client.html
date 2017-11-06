@@ -53,7 +53,14 @@ div {
     
     <button type="submit" class="btn btn-primary btn-block" onclick="send()">send</button> 
     <!--<a href="javascript:void(0)" onclick="exit()">exit</a>  -->
-
+    
+    <!-->Here is the whisper bar</!-->
+    <br>
+    <label>Whisper</label>
+    <input type="text" id="peername" name="" value="enter text here" placeholder="" onfocus="if (this.value == 'enter text here') {this.value=''}" >
+    <label id="email">abc</label> 
+    <input type="text" id="message" name="" value="enter text here" placeholder="" onfocus="if (this.value == 'enter text here') {this.value=''}" >
+    <button type="submit" class="btn btn-primary btn-block" onclick="sendWhisper()">send</button> 
 </body>
 <script type="text/javascript">
 $('document').ready(function(){
@@ -100,6 +107,16 @@ function send() {
      var str = "{name:'" + myname + "',peername:'" + peername + "',msg:'" + msg2snd + "'}";
     ws.send(str); 
 };
+function sendwhisper() {
+    var msg2snd      = $("#message").val();
+    var myname       = $("#email").text();
+    var peername     = $("#email").text();
+
+    var str = "{name:'" + sender + "',peername:'" + peername + "',msg:'" + msg2snd + "'}";
+    ws.send(str); 
+};
+
+
 function exit() {
     var r = ws.close();
     console.log("exit", r);
