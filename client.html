@@ -1,11 +1,13 @@
+ <!--
 
 <!DOCTYPE html>
 <html>
+
  <!-- Referenced from  https://www.youtube.com/watch?v=QISU14OrRbI&list=PLfdtiltiRHWHZh8C2G0xNRbcf0uyYzzK_  -->
 <!-- Referenced from  https://www.youtube.com/watch?v=tHbCkikFfDE -->
 <!-- referenced from  https://www.google.com/search?q=sky.jpg&source=lnms&tbm=isch&sa=X&ved=0ahUKEwiQkKr3_uLWAhXG1IMKHUZXCw4Q_AUICigB&biw=1366&bih=662#imgrc=NrSVH9jl6j-QcM: -->
-
-
+<!--  box-shadow: 10px 0px; -->
+ 
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -17,8 +19,14 @@
    <style>
    body {
        background-image:url("sky.jpg");
+
 }
+
+
    </style>
+
+ <link rel="stylesheet" href="css/bootstrap.min.css">
+ <link rel="stylesheet" href="css/font-awesome.min.css">
 
 </head>
 <style type="text/css" media="screen">
@@ -34,32 +42,46 @@ div {
     width: 600px;
     height: 30px;
     padding: 15px;
-    color: #FFFFFF;
-    background-color: #33CCCC;
-    box-shadow: 10px 0px;
+    background-color: #D3D3D3;    
 }
+
 </style>
 
 <body>
     <div id="show">
     </div>
     <label id="email">abc</label> 
-    <input type="text" id="message" name="" value="enter text here" placeholder="" onfocus="if (this.value == 'enter text here') {this.value=''}" >  
+    <input type="text" id="message" name="" placeholder="enter text here" placeholder="" onfocus=" this.value=''" >  
 <!--
      <input type="text" id="peername" value="" placeholder="peernickname"> 
 -->
         
       <!-- <a href="javascript:void(0)" onclick="send()">send</a> --> 
     
-    <button type="submit" class="btn btn-primary btn-block" onclick="send()">send</button> 
+    <!-- <button type="submit" class="btn btn-primary btn-block" onclick="send()">send</button> -->
+
+    <button type="button" class="btn btn-success" onclick="send()">send</button> 
+    <br> </br>
+    <br> </br>
+    <br> </br>
+     <button type="button" class="btn btn-primary" onclick=window.location.href='https://dovesmessenger.com'>Exit And Take Me Back To HomePage</button>
+     <!--button type="button" class="btn btn-primary" onclick=window.location.href='https://dovesmessenger.com/register.html'>Take Me Back To SignUp Page</button-->
+     <br> </br>
+
+     <!--button type="button" class="btn btn-danger" onclick=window.location.href='https://github.com/VikramGaru/DovesMessenger/issues'>Please Report Bugs Here</button--> 
+    
     <!--<a href="javascript:void(0)" onclick="exit()">exit</a>  -->
 
 </body>
 <script type="text/javascript">
+
 $('document').ready(function(){
+
 $("#email").text(getQueryVariable('email'));
 });
+
 //from: https://stackoverflow.com/questions/2090551/parse-query-string-in-javascript
+
 function getQueryVariable(variable) {
     var query = window.location.search.substring(1);
     var vars = query.split('&');
@@ -71,39 +93,65 @@ function getQueryVariable(variable) {
     }
     console.log('Query variable %s not found', variable);
 }
+
 var ws = new WebSocket("wss://dovesmessenger.com:12345");
+
+//Enter key function added by me
+$('html').keydown(function(e){
+  if(e.which==13){
+    send();
+  }
+});
+
 ws.onopen = function() {
     //$("#show").html("conn state: " + ws.readyState + "</br>");
-debugger;
-      $("#show").html("<i>websocket connection is successful</i>" + "</br>");
+      $("#show").html("<i>Start Group Chatting With Your Friends</i>" + "</br>");
 //    ws.open("start");
-ws.send(getQueryVariable("secret"));
+    ws.send(getQueryVariable("secret"));
 };
+
 ws.onmessage = function(info) {
-    $("#show").append(info.data + "</br>");
+    $("#show").append(htmlEscape(info.data) + "</br>");
 };
+
  
 ws.onclose = function(info) {
-debugger;
     console.log("ws.onclose!");
     console.log(info);
-window.location.replace('index.html');
+    window.location.replace('login.html');
 };
 ws.onerror = function(info) {
     console.log("ws.onerror!");
 };
+
 function send() {
     var msg2snd      = $("#message").val();
     var myname       = $("#email").text();
     var peername     = $("#email").text();
-    //var str = "{name:'" + myname + "',peername:'" + peername + "',msg:'" + msg2snd + "'}";
-     var str = "{name:'" + myname + "',peername:'" + peername + "',msg:'" + msg2snd + "'}";
-    ws.send(str); 
+    //var sani=htmlEscape(msg2snd);
+    //var sani2 = htmlEscqp
+    //var str = {name: myname,peername: peername,msg: msg2snd}";
+     
+     var json = { name: myname, peername: peername, msg: msg2snd};
+    
+     //var str = "{name:'" + myname + "',peername:'" + peername + "',msg:'" + sani + "'}";
+
+    ws.send(JSON.stringify(json)); 
+    //This is the code added by the collaborator. 
+    $("#message").val("");
 };
+
+function htmlEscape(text) {
+   return text.replace(/&/g, '&amp;').
+     replace(/</g, '&lt;').  // it's not neccessary to escape >
+     replace(/"/g, '&quot;').
+     replace(/'/g, '&#039;');
+}   
 function exit() {
     var r = ws.close();
     console.log("exit", r);
 }
+
 </script>
 
 </html>
