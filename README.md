@@ -24,4 +24,5 @@
 * Tushar Seth – tusharse@buffalo.edu
 * Veronica Ng – vcng@buffalo.edu
 * Qinxin Tian –qinxinti@buffalo.edu
-                                             
+
+My name is Tommy Li and I hope to contribute meaningful code to your project
