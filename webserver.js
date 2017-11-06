@@ -1,5 +1,23 @@
-// @Author  Vikram Garu and Veronica Ng. 
+//https://github.com/websockets/ws
+//https://github.com/websockets/ws/blob/master/doc/ws.md#new-wsserveroptions-callback
+//http://django-websocket-redis.readthedocs.io/en/latest/heartbeats.html
 
+//http://nodejs.cn/api/http.html
+//https://www.youtube.com/watch?v=uaizKlOXyfY
+//https://www.youtube.com/watch?v=OjJ7XgWd9mQ
+//https://www.youtube.com/watch?v=pNKNYLv2BpQ
+//https://www.youtube.com/watch?v=HyGtI17qAjM
+//https://www.youtube.com/watch?v=tHbCkikFfDE
+
+
+//The Websocket protocol implements so called PING/PONG messages to keep Websockets alive,
+//even behind proxies, firewalls and load-balancers. The server sends a 
+//PING message to the client through the Websocket, which then replies 
+//with PONG. If the client does not reply, the server closes the 
+//connection.
+
+
+//@Author  Tushar Seth, Jeiwei Shen, Qinxin Tian, Veronica Ng and Vikram Garu
 var express = require('express');
 var app = express();
 //Code from Godaddy
@@ -25,7 +43,10 @@ var bodyParser = require("body-parser");
 var MongoClient = require('mongodb').MongoClient;
 var url = "mongodb://104.131.3.139:27017";
  //code from Godaddy for testing purposes only. 
- 
+var bcrypt = require('bcrypt');
+//removeDatabase(); //Remember to comment this line out. This line is just to create a new collection again as we didn't have security before
+createDB();
+createCollection(); 
 
 
 
@@ -45,6 +66,7 @@ res.write('0');
 }
 else{
 secret = Math.random();
+connectedEmail = req.body.email;
 var retObj = 
 {
 email: req.body.email,
@@ -96,10 +118,12 @@ httpsServer.listen(port1,
 /*
 //This is where I added 80
 var server = app.listen(80, function () {
+
   var host = server.address().address
   var port = server.address().port
     //var port = '<443>';
   console.log("Example app listening at http://%s:%s", host, port)
+
 })
 */
 
@@ -114,6 +138,7 @@ var server = app.listen(80, function () {
 
 
 var secret = null;
+var connectedEmail = null;
 
 const webSckSrv = require('ws');
 var wssServer = https.createServer(options);
@@ -127,16 +152,19 @@ function sckheartbeat() {
 
 }
 
-wss.broadcast = function broadcast(s,ws) {
+wss.broadcast = function broadcast(s,ws,fromEmail) {
  
   wss.clients.forEach(function each(client) {
          if (typeof client.user != "undefined") {
         if(s == 1){
-console.log("sending " + ws.msg + " to " + client.user);
-                          client.send(ws.name + ": " + "'"+ ws.msg + "'");
+console.log("sending " + ws.msg + " to " + fromEmail);
+                          client.send("[" + Date() + "]: "+ fromEmail + ": " + "'"+ ws.msg + "'");
         }
         if(s == 0){
-        client.send(ws + " exit chatroom");
+        //client.send(fromEmail + " exit chatroom");
+                         client.send("One User Exited Chatroom");
+
+                        
         }
          }
     });
@@ -165,16 +193,19 @@ console.log("secret stored = " + secret);
 if(secret != jsonStr)
 {
 secret = null;
+connectedEmail = null;
 console.log("Secret failed, disconnecting");
 ws.close();
 return;
 }
+ws.connectedEmail = connectedEmail;
 secret = null;
+connectedEmail = null;
 }
         var obj = eval('(' + jsonStr + ')');
         this.user = obj;
         if (typeof this.user.msg != "undefined") {
-            wss.broadcast(1,obj);
+            wss.broadcast(1,obj,ws.connectedEmail);
               
         }
     });
@@ -228,8 +259,6 @@ MongoClient.connect(url, function(err, db) {
 Inserting a new user to Users with fields of name, password and email. More details can be added later
 */
 function insertUser(name,password,email,phone){
-createDB();
-createCollection();
 return new Promise(function(resolve,reject){
 var promise=findUser(email);
 var res=false;
@@ -237,7 +266,9 @@ promise.then(function(arr){
 if(arr.length==0){
 MongoClient.connect(url, function(err, db) {
    if (err) reject(err);
-   var myobj = { username: name, password: password, email: email, phone: phone};
+   var salt=bcrypt.genSaltSync();
+   var hash=bcrypt.hashSync(password,salt);
+   var myobj = { username: name, password: hash, email: email, phone: phone};
    db.collection("Users").insertOne(myobj, function(err, res) {
     if (err) reject(err) ;
     console.log("User Added");
@@ -297,7 +328,7 @@ var promise=findUser(ulog);
 var res=false;
 promise.then(function(arr){
 if(arr.length!=0){
-if((arr[0].password).localeCompare(pass)==0){res=true;console.log("Successfully logged in");}
+if(bcrypt.compareSync(pass,arr[0].password)){res=true;console.log("Successfully logged in");}
     else{console.log("Wrong Password");}
 }
 else{
@@ -309,7 +340,6 @@ reject(err);
 });
 });
 }
-
 /*
 Delete user with a given email address
 */
@@ -324,6 +354,17 @@ MongoClient.connect(url, function(err, db) {
   });
 });
 }
-//I added the very last line here. 
 
-//}).listen(port1);
+/*
+Remove the whole collection
+*/
+function removeDatabase(){
+MongoClient.connect(url, function(err, db) {
+  if (err) throw err;
+  db.collection("Users").drop(function(err, delOK) {
+    if (err) throw err;
+    if (delOK) console.log("Collection deleted");
+    db.close();
+  });
+});
+}
