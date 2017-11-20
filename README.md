@@ -1,7 +1,7 @@
 # Doves - Messenger Application
 ## README
 
-1. Open a browser like Mozilla Firefox or Google Chrome and go to the address: https://dovesmessenger.com/
+1. Open a browser like Mozilla Firefox or Google Chrome and go to the address: https://www.dovesmessenger.com/
 
 2. If you already have an account, click on "Sign In" and sign in with your email address and password 
 
