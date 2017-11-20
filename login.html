@@ -1,86 +1,82 @@
 <!DOCTYPE html>
+<html>
+
 <head>
-    <!-- Page Title -->
-    <title>Login</title>
-    
-    <!-- Meta Tags -->
-  
-    <!-- @Author Tushar, Jiewei Shen and Tian  --> 
-    
-    <!-- Theme Styles -->
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/font-awesome.min.css">
-    
-   
-         
-    
+  <!-- Page Title -->
+  <title>Login</title>
+  <!-- Meta Tags -->
+  <!-- Theme Styles -->
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/font-awesome.min.css">
   <script src="jquery.js"></script>
+  <link rel="stylesheet" href="../../Downloads/DovesMessenger-Develop/css/font-awesome.min.css">
+  <link rel="stylesheet" href="../../Downloads/DovesMessenger-Develop/css/bootstrap.min.css">
 </head>
-<body style="background-image:url('back.png');" >
-  
-                <form style="margin: auto; padding: 20px; background-color: white; width: 400px; height: 400px; margin-top: 100px; box-shadow: 0px 0px 20px #292929;" id="ajaxForm" action="#" method="post">
-                    <center><h1 style="font-family: sans-serif;">Login</h1></center>
-                    <center><h3 style="color: red; display:none; " id="error" >Login Failed</h3></center>
-                    <center><h3 style="color: green; display:none; " id="success" >Login Success</h3></center>
-                    <div class="form-group">
-                         <label for="email">Email address:</label>
-                         <input required="" type="email" class="form-control" id="email">
-                    </div>
-                    <div class="form-group">
-                         <label for="pwd">Password:</label>
-                         <input required="" type="password" class="form-control" id="password">
-                    </div>
-                     <button type="submit" class="btn btn-primary btn-block">Login</button>
-                     
-                       
-                        <br />
-                        <center><a href="register.html">Please Sign Up Here</a></center>
-                </form>
-               
-            
- <script>
- 
- $('document').ready(function(){
-    $('#ajaxForm').submit(function(e){
-     e.preventDefault();
-     var email=$('#email').val();
-      $('#success').hide();
-      $('#error').hide();
-     var password=$('#password').val();
-     $.ajax({
-        url:"login",
-        method:'post',
-        data:{'email':email,'password':password},
-         
-        success:function(r){
-            if(r==0)
-            {
-               $('#error').show();
+
+<!--   <body style="background-image:url('back.png');" class="">   -->
+ <body style="background-image: url(&quot;https://static.pexels.com/photos/206776/pexels-photo-206776.jpeg&quot;);"  >
+  <form style="margin: 100px auto auto; padding: 20px; background-color: white; width: 400px; height: 450px; box-shadow: rgb(41, 41, 41) 0px 0px 20px;" id="ajaxForm" action="#" method="post">
+    <center>
+      <h1 style="font-family: sans-serif;">Login</h1>
+    </center>
+    <center>
+      <h3 style="color: red; display:none; " id="error">Login Failed</h3>
+    </center>
+    <center>
+      <h3 style="color: green; display:none; " id="success">Login Success</h3>
+    </center>
+    <div class="form-group"> <label for="email">Email address:</label>
+      <input required="" type="email" class="form-control" id="email"> </div>
+    <div class="form-group"> <label for="pwd">Password:</label>
+      <input required="" type="password" class="form-control" id="password"> </div>
+    <br>
+    <button type="submit" class="btn btn-primary btn-block btn-lg">Login</button>
+    <button type="button" class="btn btn-success text-left btn-block btn-sm" onclick="window.location.href='https://dovesmessenger.com'">Take Me Back To Homepage</button>
+    <button type="button" class="btn btn-success btn-block" onclick="window.location.href='https://dovesmessenger.com/register.html'">Take Me To Sign Up Page</button>
+    <center></center>
+    <br>
+    <center></center>
+  </form>
+  <script>
+    $('document').ready(function(){
+        $('#ajaxForm').submit(function(e){
+         e.preventDefault();
+         var email=$('#email').val();
+          $('#success').hide();
+          $('#error').hide();
+         var password=$('#password').val(); // for encoding as you said...
+         $.ajax({
+            url:"login",
+            method:'post',
+            data:{'email':email,'password':password},
+             
+            success:function(r){
+                if(r==0)
+                {
+                   $('#error').show();
+                }
+    	    else
+                {
+                   $('#success').show(); 
+                   //do redirect to index page etc
+    		var retObj = JSON.parse(r);
+                   window.location.replace('client.html?' + encodeURIComponent("email") + '=' + encodeURIComponent(retObj.email) + '&' + encodeURIComponent("secret") + '=' + encodeURIComponent(retObj.secret));
+                }
+                
+            },
+            error:function(){
+                console.log("failed");
             }
-	    else
-            {
-               $('#success').show(); 
-               //do redirect to index page etc
-		var retObj = JSON.parse(r);
-               window.location.replace('client.html?' + encodeURIComponent("email") + '=' + encodeURIComponent(retObj.email) + '&' + encodeURIComponent("secret") + '=' + encodeURIComponent(retObj.secret));
-            }
-            
-        },
-        error:function(){
-            console.log("failed");
-        }
-    });
-     
+        });
          
-    });
-    
-    
-    
-    
- });
- 
- 
- </script>           
-            
+             
+        });
+        
+        
+        
+        
+     });
+  </script>
 </body>
+
 </html>
